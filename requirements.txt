@@ -1,0 +1,7 @@
+numpy
+tensorflow
+requests
+nltk
+pickle
+json
+random
