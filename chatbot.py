@@ -7,6 +7,7 @@ import requests
 
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
+from sklearn.feature_extraction.text import CountVectorizer
 
 lemmatizer = WordNetLemmatizer()
 intents = json.loads(open(r'D:\chatbot\create_chatbot_using_python-main\create_chatbot_using_python-main\intents.json').read())
@@ -58,12 +59,11 @@ def clean_up_sentence(sentence):
 
 def bag_of_words(sentence):
     sentence_words = clean_up_sentence(sentence)
-    bag = [0] * len(words)
-    for w in sentence_words:
-        for i, word in enumerate(words):
-            if word == w:
-                bag[i] = 1
-    return np.array(bag)
+    sentence_string = " ".join(sentence_words)
+    vectorizer = CountVectorizer(vocabulary=words)
+
+    bag = vectorizer.transform([sentence_string]).toarray()[0]
+    return bag
 
 def predict_class(sentence):
     bow = bag_of_words(sentence)
