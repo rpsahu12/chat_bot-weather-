@@ -36,25 +36,24 @@ classes = sorted(set(classes))
 pickle.dump(words, open('words.pkl', 'wb'))
 pickle.dump(classes, open('classes.pkl', 'wb'))
 
-training = []
-outputEmpty = [0] * len(classes)
+# --- 1. PREPARE DATA ---
+corpus = []  # Sentences
+tags = []    # Labels
 
-for document in documents:
-    bag = []
-    wordPatterns = document[0]
-    wordPatterns = [lemmatizer.lemmatize(word.lower()) for word in wordPatterns]
-    for word in words:
-        bag.append(1) if word in wordPatterns else bag.append(0)
+for doc in documents:
+    pattern = [lemmatizer.lemmatize(w.lower()) for w in doc[0]] #this is your 'pattern' list, ex: ['how', 'are', 'you']
+    corpus.append(' '.join(pattern)) # Convert list of words back to sentence
+    tags.append(doc[1])
 
-    outputRow = list(outputEmpty)
-    outputRow[classes.index(document[1])] = 1
-    training.append(bag + outputRow)
+# --- 2. VECTORIZE ---
+vectorizer = CountVectorizer(vocabulary=words)
+trainX = vectorizer.transform(corpus).toarray()
 
-random.shuffle(training)
-training = np.array(training)
+lb = LabelBinarizer()
+lb.fit(classes)
+trainY = lb.transform(tags)
 
-trainX = training[:, :len(words)]
-trainY = training[:, len(words):]
+trainX, trainY = shuffle(trainX, trainY, random_state=42)
 
 
 model = tf.keras.Sequential()
