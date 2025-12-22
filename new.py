@@ -5,6 +5,10 @@ import numpy as np
 import tensorflow as tf
 import requests
 
+from sklearn.utils import shuffle
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import LabelBinarizer
+
 import nltk
 nltk.download('wordnet')
 nltk.download('punkt')
